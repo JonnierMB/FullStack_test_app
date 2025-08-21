@@ -3,8 +3,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 
-engine = create_engine("sqlite:///database.db", echo=True)
-
+#engine = create_engine("sqlite:///database.db", echo=True)
+engine = create_engine("sqlite:///backend/database.db", connect_args={"check_same_thread": False}, echo=True)
 Base = declarative_base()
 
 class Challenge(Base):
