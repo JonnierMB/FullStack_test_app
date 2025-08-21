@@ -18,7 +18,7 @@ export function ChallengeGenerator(){
             const data = await makeRequest("quota")
             setQuota(data)
         }catch (err) {
-            console.log(err)
+            console.log(err.message)
         }
     }
     const generateChallenge = async() => {
@@ -45,8 +45,6 @@ export function ChallengeGenerator(){
         resetDate.setHours(resetDate.getHours()+24)
         return resetDate
     }
-
-
 
     return <div className="challenge-container">
         <h2>Coding Challenge Generator</h2>
