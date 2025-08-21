@@ -33,11 +33,18 @@ export function ChallengeGenerator(){
             setChallenge(data)
             fetchQuota()
         } catch(err) {
-            console.log(err)
+            setError(err.message || "Failed to generate challenge.")
+        } finally{
+            setIsLoading(false)
         }
     }
 
-    const getNextResetTime = ()=> {}
+    const getNextResetTime = ()=> {
+        if(!quota?.last_reset_data) return null
+        const resetDate = new Date(quota.last_reset_data)
+        resetDate.setHours(resetDate.getHours()+24)
+        return resetDate
+    }
 
 
 
@@ -46,7 +53,7 @@ export function ChallengeGenerator(){
         <div className="quota-display">
             <p>Challenges remaining today: {quota?.quota_remaining || 0}</p>
             {quota?.quota_remaining === 0 && (
-                <p>Next reset: {0}</p>
+                <p>Next reset: {getNextResetTime()?.toLocaleString()}</p>
             )}
         </div>
         <div className="difficulty-selector">

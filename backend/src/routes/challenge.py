@@ -20,20 +20,20 @@ router = APIRouter()
 class ChallengeRequest(BaseModel):
     difficulty: str
 
-    class Confing:
+    class Config:
         json_schema_extra = {"example": {"difficulty": "easy"}}
-        orm_mode = True
+        from_attributes = True
 
 @router.post("/generate-challenge")
 async def generate_challenge(request: ChallengeRequest, db: Session = Depends(get_db)):
-    
+    print("generate_challenge called with request:", request)
     try:
         user_details = authenticate_and_get_user_details(request)
         user_id = user_details.get("user_id")
 
         quota = get_challenge_quota(db, user_id)
         if not quota:
-            create_challenge_quota(db, user_id)
+            quota=create_challenge_quota(db, user_id)
         quota = reset_quota_if_needed(db, quota)
 
         if quota.remaining_quota <= 0:
@@ -65,7 +65,7 @@ async def generate_challenge(request: ChallengeRequest, db: Session = Depends(ge
         raise HTTPException(status_code=400, detail=str(e))
     
 @router.get("/my-history")
-async def my_history(request: Request, db:Session=Depends(get_db)):
+async def my_history(request: Request, db: Session = Depends(get_db)):
     user_details = authenticate_and_get_user_details(request)
     user_id = user_details.get("user_id")
 
@@ -73,8 +73,8 @@ async def my_history(request: Request, db:Session=Depends(get_db)):
     return {"challenges": challenges}
 
 @router.get("/quota")
-async def get_quota(request: Request, db: Session=Depends(get_db)):
-    user_details =  authenticate_and_get_user_details(request)
+async def get_quota(request: Request, db: Session = Depends(get_db)):
+    user_details = authenticate_and_get_user_details(request)
     user_id = user_details.get("user_id")
 
     quota = get_challenge_quota(db, user_id)
